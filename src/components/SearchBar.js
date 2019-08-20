@@ -1,17 +1,52 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import './SearchBar.css';
 
 class SearchBar extends Component {
+  constructor(props) {
+    super(props);
+      this.state = {
+        active: false,
+        value: "",
+      };
+  }
+
+  onFocus = () => this.setState({ active: !this.state.active });
+
+  onBlur = () => this.setState({ active: !this.state.active })
+
+  clearUserInput = () => this.setState({ value: "" });
+
+  onChange = (event) => {
+    this.setState({ value: event.target.value });
+  }
+
   render() {
+    const { active, value, errorMessage } = this.state;
+    const { placeholder } = this.props;
+
+    const showClearButton = value !== "";
+
     return (
       <div className="panel">
         <form className="form">
           <label className="label">Search Bar</label>
           <div className="input-group">
             <input
-              type="search"
-              placeholder="Zoeken"
+              type="text"
+              onFocus={this.onFocus}
+              onBlur={this.onBlur}
+              onChange={(e) => this.onChange(e)}
+              value={value}
+              placeholder={placeholder}
             />
+
+            { showClearButton &&
+              <div
+                className="clearButton"
+                onClick={this.clearUserInput}
+              >X</div> }
+
             <button type="button">
               <svg viewBox="0 0 1024 1024" className="css-ha8kg">
                 <path
@@ -27,5 +62,9 @@ class SearchBar extends Component {
     );
   }
 }
+
+SearchBar.propTypes = {
+  placeholder: PropTypes.string.isRequired
+};
 
 export default SearchBar;

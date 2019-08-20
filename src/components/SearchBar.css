@@ -1,6 +1,5 @@
 body {
   font-family: "Lato", sans-serif;
-  line-height: 1.42857;
   color: #67707c;
   background-color: #D3DADE;
 }
@@ -23,14 +22,16 @@ label {
 }
 
 .input-group {
-  display: flex;
+  position: relative;
+  display: inline-block;
   width: 100%;
+  height: 44px;
   margin-top: 10px;
 }
 
 input {
   width: 90%;
-  height: 44px;
+  height: 32px;
   padding: 5px;
   border: 1px solid #ddd;
   box-shadow: none;
@@ -38,11 +39,19 @@ input {
   font-size: 16px;
 }
 
+.clearButton {
+  position: absolute;
+  right: 65px;
+  top: 16px;
+  cursor: pointer;
+}
+
 input:focus {
   box-shadow: 0 0 0 1px #FECA1D, 0 0 8px #FECA1D;
 }
 
 button {
+  position: absolute;
   width: 44px;
   height: 44px;
   padding: 5px;
