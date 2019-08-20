@@ -1,0 +1,60 @@
+body {
+  font-family: "Lato", sans-serif;
+  line-height: 1.42857;
+  color: #67707c;
+  background-color: #D3DADE;
+}
+
+.panel {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+}
+
+label {
+  font-size: 30px;
+}
+
+.input-group {
+  display: flex;
+  width: 100%;
+  margin-top: 10px;
+}
+
+input {
+  width: 90%;
+  height: 44px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  box-shadow: none;
+  outline: none;
+  font-size: 16px;
+}
+
+input:focus {
+  box-shadow: 0 0 0 1px #FECA1D, 0 0 8px #FECA1D;
+}
+
+button {
+  width: 44px;
+  height: 44px;
+  padding: 5px;
+}
+
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px #FECA1D, 0 0 0 3px #FECA1D;
+  cursor: pointer;
+}
+
+svg {
+  height: 20px;
+  width: 20px;
+}
