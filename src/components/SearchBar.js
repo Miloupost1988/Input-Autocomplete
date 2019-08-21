@@ -20,22 +20,22 @@ class SearchBar extends Component {
       };
   }
 
-  componentDidMount = (query) => {
-    fetch(`${this.baseRoute}${this.apiSearchRoute}?q=${query}`)
+  async componentDidMount() {
+    const getInfo = await fetch(`${this.baseRoute}${this.apiSearchRoute}?q=${this.state.value}`)
       .then(res => res.json())
       .then(result => {
-          this.setState({
-            isLoaded: true,
-            suggestions: result.suggestions
-          });
-        },
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      )
+        this.setState({
+          isLoaded: true,
+          suggestions: result.suggestions
+        });
+      },
+      (error) => {
+        this.setState({
+          isLoaded: true,
+          error
+        });
+      }
+    )
   }
 
   onFocus = () => this.setState({ active: !this.state.active });
@@ -43,8 +43,18 @@ class SearchBar extends Component {
   onBlur = () => this.setState({ active: !this.state.active });
 
   onChange = (event) => {
-    this.setState({ value: event.target.value });
-  }
+    const { value, suggestions } = this.state;
+    this.setState({
+      value: event.target.value
+    }, () => {
+      if (value && value.length > 1) {
+        if (value.length % 2 === 0) {
+          const filteredResults = suggestions.filter(({ searchterm }) => searchterm.includes(value));
+          this.setState({ suggestions: filteredResults });
+        }
+      }
+    })
+  };
 
   onKeyUp = () => {
     const { isLoaded, error } = this.state;
@@ -59,7 +69,7 @@ class SearchBar extends Component {
     const { error, isLoaded, active, value, suggestions, suggestionsShown } = this.state;
     const { placeholder, errorMessage } = this.props;
 
-    const showSuggestions = active && isLoaded;
+    const showSuggestions = active && isLoaded && value !== "";
     const showClearButton = value !== "";
     const showErrorMessage = error && isLoaded;
 
@@ -100,6 +110,7 @@ class SearchBar extends Component {
             }
 
           </div>
+
           { showErrorMessage &&
               <div className="errorMessage">{errorMessage}</div>
           }
@@ -110,7 +121,8 @@ class SearchBar extends Component {
 }
 
 SearchBar.propTypes = {
-  placeholder: PropTypes.string.isRequired
+  placeholder: PropTypes.string.isRequired,
+  errorMessage: PropTypes.string.isRequired
 };
 
 export default SearchBar;
