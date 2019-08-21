@@ -1,31 +1,67 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import SearchSuggestions from './SearchSuggestions';
 import './SearchBar.css';
 
 class SearchBar extends Component {
   constructor(props) {
     super(props);
+
+      this.baseRoute = 'http://localhost:3000';
+      this.apiSearchRoute = '/search';
+
       this.state = {
+        error: null,
+        isLoaded: false,
         active: false,
         value: "",
+        suggestions: [],
+        suggestionsShown: false
       };
+  }
+
+  componentDidMount = (query) => {
+    fetch(`${this.baseRoute}${this.apiSearchRoute}?q=${query}`)
+      .then(res => res.json())
+      .then(result => {
+          this.setState({
+            isLoaded: true,
+            suggestions: result.suggestions
+          });
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error
+          });
+        }
+      )
   }
 
   onFocus = () => this.setState({ active: !this.state.active });
 
-  onBlur = () => this.setState({ active: !this.state.active })
-
-  clearUserInput = () => this.setState({ value: "" });
+  onBlur = () => this.setState({ active: !this.state.active });
 
   onChange = (event) => {
     this.setState({ value: event.target.value });
   }
 
-  render() {
-    const { active, value, errorMessage } = this.state;
-    const { placeholder } = this.props;
+  onKeyUp = () => {
+    const { isLoaded, error } = this.state;
+    if (isLoaded && !error) {
+      this.setState({ suggestionsShown: true });
+    }
+  };
 
+  clearUserInput = () => this.setState({ value: "" });
+
+  render() {
+    const { error, isLoaded, active, value, suggestions, suggestionsShown } = this.state;
+    const { placeholder, errorMessage } = this.props;
+
+    const showSuggestions = active && isLoaded;
     const showClearButton = value !== "";
+    const showErrorMessage = error && isLoaded;
 
     return (
       <div className="panel">
@@ -34,18 +70,20 @@ class SearchBar extends Component {
           <div className="input-group">
             <input
               type="text"
-              onFocus={this.onFocus}
-              onBlur={this.onBlur}
-              onChange={(e) => this.onChange(e)}
               value={value}
               placeholder={placeholder}
+              onFocus={this.onFocus}
+              onBlur={this.onBlur}
+              onChange={this.onChange}
+              onKeyUp={this.onKeyUp}
             />
 
             { showClearButton &&
-              <div
-                className="clearButton"
-                onClick={this.clearUserInput}
-              >X</div> }
+                <div
+                  className="clearButton"
+                  onClick={this.clearUserInput}
+                >X</div>
+            }
 
             <button type="button">
               <svg viewBox="0 0 1024 1024" className="css-ha8kg">
@@ -56,7 +94,15 @@ class SearchBar extends Component {
                 </path>
               </svg>
             </button>
+
+            { showSuggestions && suggestionsShown &&
+                <SearchSuggestions suggestions={suggestions}/>
+            }
+
           </div>
+          { showErrorMessage &&
+              <div className="errorMessage">{errorMessage}</div>
+          }
         </form>
       </div>
     );

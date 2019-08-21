@@ -7,4 +7,5 @@ storiesOf('SearchBar', module)
   .add('default with hardcoded text', () => <SearchBar/>)
   .add('searchbar with dynamic text', () => <SearchBar
     placeholder='Zoeken'
+    errorMessage="oeps, er is iets misgegaan"
   />);
