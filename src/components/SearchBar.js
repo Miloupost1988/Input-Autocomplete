@@ -16,12 +16,13 @@ class SearchBar extends Component {
         active: false,
         value: "",
         suggestions: [],
-        suggestionsShown: false
+        suggestionsShown: false,
+        filteredResults: []
       };
   }
 
   async componentDidMount() {
-    const getInfo = await fetch(`${this.baseRoute}${this.apiSearchRoute}?q=${this.state.value}`)
+    const fetchApiData = await fetch(`${this.baseRoute}${this.apiSearchRoute}?q=${this.state.value}`)
       .then(res => res.json())
       .then(result => {
         this.setState({
@@ -38,29 +39,31 @@ class SearchBar extends Component {
     )
   }
 
-  onFocus = () => this.setState({ active: !this.state.active });
+  onKeyUp = () => {
+    const { isLoaded, error } = this.state;
+    if (isLoaded && !error) {
+      this.setState({ suggestionsShown: true });
+    }
+  };
+
+  onFocus = () => {
+    this.setState({ active: !this.state.active });
+  }
 
   onBlur = () => this.setState({ active: !this.state.active });
 
   onChange = (event) => {
     const { value, suggestions } = this.state;
     this.setState({
-      value: event.target.value
+      value: event.target.value,
     }, () => {
       if (value && value.length > 1) {
         if (value.length % 2 === 0) {
           const filteredResults = suggestions.filter(({ searchterm }) => searchterm.includes(value));
-          this.setState({ suggestions: filteredResults });
+          this.setState({ filteredResults: filteredResults });
         }
       }
     })
-  };
-
-  onKeyUp = () => {
-    const { isLoaded, error } = this.state;
-    if (isLoaded && !error) {
-      this.setState({ suggestionsShown: true });
-    }
   };
 
   clearUserInput = () => this.setState({ value: "" });
@@ -69,7 +72,7 @@ class SearchBar extends Component {
     const { error, isLoaded, active, value, suggestions, suggestionsShown } = this.state;
     const { placeholder, errorMessage } = this.props;
 
-    const showSuggestions = active && isLoaded && value !== "";
+    const showSuggestions = active && isLoaded;
     const showClearButton = value !== "";
     const showErrorMessage = error && isLoaded;
 
