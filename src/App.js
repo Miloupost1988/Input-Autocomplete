@@ -7,7 +7,7 @@ class App extends Component {
       <div>
         <SearchBar
           placeholder="zoeken"
-          errorMessage="oeps, er is iets misgegaan"
+          errorMessage="Geen match gevonden! Probeer opnieuw"
         />
       </div>
     );

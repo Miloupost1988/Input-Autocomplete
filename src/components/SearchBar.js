@@ -16,13 +16,16 @@ class SearchBar extends Component {
         active: false,
         value: "",
         suggestions: [],
-        suggestionsShown: false,
-        filteredResults: []
+        showSuggestions: false,
+        filteredResults: [],
+        activeSuggestion: 0,
+        pressedKeyUp: false
       };
   }
 
-  async componentDidMount() {
-    const fetchApiData = await fetch(`${this.baseRoute}${this.apiSearchRoute}?q=${this.state.value}`)
+  // async AJAX call to retrieve api data. TO DO: maybe move to axios - cleaner code
+  async fetchApiData() {
+    await fetch(`${this.baseRoute}${this.apiSearchRoute}?q=${this.state.value}`)
       .then(res => res.json())
       .then(result => {
         this.setState({
@@ -37,44 +40,75 @@ class SearchBar extends Component {
         });
       }
     )
-  }
+  };
 
+  // populate suggestions [] with data for onkeyup method
+  componentDidMount() {
+    this.fetchApiData();
+  };
+
+  // check if api data is loaded without error, create a true state in order to hide later on onblur
   onKeyUp = () => {
     const { isLoaded, error } = this.state;
     if (isLoaded && !error) {
-      this.setState({ suggestionsShown: true });
+      this.setState({ showSuggestions: true, pressedKeyUp: true });
     }
   };
 
-  onFocus = () => {
-    this.setState({ active: !this.state.active });
-  }
+  // hide suggestions
+  onBlur = () => this.setState({
+    active: !this.state.active,
+    showSuggestions: false,
+  });
 
-  onBlur = () => this.setState({ active: !this.state.active });
-
+  // event is fired when users input changes
   onChange = (event) => {
-    const { value, suggestions } = this.state;
+    const { value, suggestions, pressedKeyUp } = this.state;
     this.setState({
       value: event.target.value,
+      pressedKeyUp: false
     }, () => {
       if (value && value.length > 1) {
         if (value.length % 2 === 0) {
-          const filteredResults = suggestions.filter(({ searchterm }) => searchterm.includes(value));
+
+          // filters suggestions which do not match the users input
+          const filteredResults = suggestions.filter(({ searchterm }) => searchterm.includes(value.toLowerCase()));
           this.setState({ filteredResults: filteredResults });
         }
       }
     })
   };
 
-  clearUserInput = () => this.setState({ value: "" });
+  renderSuggestions = () => {
+    const { suggestions, filteredResults, value, pressedKeyUp, showSuggestions } = this.state;
+    const { errorMessage } = this.props;
+
+    if (showSuggestions && value.length > 2) {
+
+      // error case
+      if (filteredResults.length === 0) {
+        return (
+          <div className="errorMessage">{errorMessage}</div>
+        );
+      }
+      return (
+        <SearchSuggestions suggestions={filteredResults} />
+      );
+    } else if(showSuggestions && pressedKeyUp) {
+      return (
+        <SearchSuggestions suggestions={suggestions}/>
+      );
+    }
+    return null
+  };
+
+  clearUserInput = () => this.setState({ value: "", errorShown: false });
 
   render() {
-    const { error, isLoaded, active, value, suggestions, suggestionsShown } = this.state;
-    const { placeholder, errorMessage } = this.props;
+    const { value } = this.state;
+    const { placeholder } = this.props;
 
-    const showSuggestions = active && isLoaded;
     const showClearButton = value !== "";
-    const showErrorMessage = error && isLoaded;
 
     return (
       <div className="panel">
@@ -82,13 +116,12 @@ class SearchBar extends Component {
           <label className="label">Search Bar</label>
           <div className="input-group">
             <input
-              type="text"
               value={value}
               placeholder={placeholder}
-              onFocus={this.onFocus}
               onBlur={this.onBlur}
               onChange={this.onChange}
               onKeyUp={this.onKeyUp}
+              onKeyDown={this.onKeyDown}
             />
 
             { showClearButton &&
@@ -108,15 +141,11 @@ class SearchBar extends Component {
               </svg>
             </button>
 
-            { showSuggestions && suggestionsShown &&
-                <SearchSuggestions suggestions={suggestions}/>
-            }
+            { this.renderSuggestions() }
 
           </div>
 
-          { showErrorMessage &&
-              <div className="errorMessage">{errorMessage}</div>
-          }
+
         </form>
       </div>
     );

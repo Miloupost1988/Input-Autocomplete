@@ -1,0 +1,28 @@
+body {
+  font-family: "Lato", sans-serif;
+  color: #67707c;
+}
+
+suggestion-container {
+  width: 300px;
+}
+
+.no-suggestions {
+  color: #999;
+  padding: 0.5rem;
+}
+
+.suggestion-list {
+  width: 294px;
+  border: 1px solid #ddd;
+  list-style: none;
+  margin-top: 0;
+  max-height: 143px;
+  overflow-y: auto;
+  padding: 5px 0 5px 5px;
+}
+
+.suggestion-list:hover {
+  color: black;
+  cursor: pointer;
+}

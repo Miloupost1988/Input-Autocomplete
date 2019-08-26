@@ -5,6 +5,8 @@ body {
 }
 
 .panel {
+  width: 400px;
+  margin: 20px auto;
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -14,7 +16,16 @@ body {
 .form {
   display: flex;
   flex-direction: column;
-  margin: 20px;
+  width: 320px;
+  position: relative;
+  display: block;
+  margin: 20px auto;
+}
+
+@media only screen and (max-width: 767px) {
+  .form {
+    width: 80%;
+  }
 }
 
 label {
@@ -39,11 +50,20 @@ input {
   font-size: 16px;
 }
 
+input[placeholder]:focus::-webkit-input-placeholder {
+  transition: opacity 0.2s 0.2s ease;
+  opacity: 0;
+}
+
 .clearButton {
   position: absolute;
-  right: 65px;
+  right: 35px;
   top: 16px;
   cursor: pointer;
+}
+
+.clearButton:hover {
+  color: black;
 }
 
 input:focus {
