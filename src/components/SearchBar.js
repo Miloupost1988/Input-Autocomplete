@@ -13,7 +13,6 @@ class SearchBar extends Component {
         active: false,
         userInput: "",
         suggestions: [],
-        filteredResults: [],
         showSuggestions: false,
       };
   }
@@ -23,7 +22,7 @@ class SearchBar extends Component {
     const userInput = event.currentTarget.value;
 
     if (userInput.length < 2) {
-      this.setState({ filteredResults: [] });
+      this.setState({ suggestions: [] });
       return;
     }
 
@@ -36,7 +35,7 @@ class SearchBar extends Component {
       });
 
       const filteredResults = this.state.suggestions.filter(({ searchterm }) => searchterm.includes(userInput.toLowerCase()));
-      this.setState({ filteredResults });
+      this.setState({ suggestions: filteredResults });
 
     } catch (err) {
       throw err;
@@ -60,11 +59,11 @@ class SearchBar extends Component {
   clearUserInput = () => this.setState({ value: "" });
 
   render() {
-    const { userInput, suggestions, isLoaded, filteredResults, showSuggestions } = this.state;
+    const { userInput, isLoaded, suggestions, showSuggestions } = this.state;
     const { placeholder, errorMessage } = this.props;
 
     const showClearButton = userInput !== "";
-    const showErrorMessage = (userInput.length > 2) && (filteredResults.length === 0);
+    const showErrorMessage = (userInput.length > 2) && (suggestions.length === 0);
 
     return (
       <div className="panel">
@@ -98,7 +97,7 @@ class SearchBar extends Component {
             </button>
 
             { isLoaded &&
-              <SearchSuggestions suggestions={filteredResults} />
+              <SearchSuggestions suggestions={suggestions} />
             }
 
           </div>
