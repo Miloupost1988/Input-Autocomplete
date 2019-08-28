@@ -7,7 +7,6 @@ const SearchSuggestions = (props) => {
 
     <div
       className="suggestion-list"
-      onClick={e => props.onClick(e)}
     >
       <span
         key={suggestion}

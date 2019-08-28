@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import fetchSuggestions from '../services/FetchSuggestions';
 import SearchSuggestions from './SearchSuggestions';
 import './SearchBar.css';
 
@@ -7,53 +8,40 @@ class SearchBar extends Component {
   constructor(props) {
     super(props);
 
-      this.baseRoute = 'http://localhost:3000';
-      this.apiSearchRoute = '/search';
-
       this.state = {
-        error: null,
         isLoaded: false,
         active: false,
-        value: "",
+        userInput: "",
         suggestions: [],
-        showSuggestions: false,
         filteredResults: [],
-        activeSuggestion: 0,
-        pressedKeyUp: false
+        showSuggestions: false,
       };
   }
 
-  // async AJAX call to retrieve api data. TO DO: maybe move to axios - cleaner code
-  async fetchApiData() {
-    await fetch(`${this.baseRoute}${this.apiSearchRoute}?q=${this.state.value}`)
-      .then(res => res.json())
-      .then(result => {
-        this.setState({
-          isLoaded: true,
-          suggestions: result.suggestions
-        });
-      },
-      (error) => {
-        this.setState({
-          isLoaded: true,
-          error
-        });
-      }
-    )
-  };
+  // check if user input is higher than 2 characters, show suggestions accordingly
+  onHandleKeyUp = async (event) => {
+    const userInput = event.currentTarget.value;
 
-  // populate suggestions [] with data for onkeyup method
-  componentDidMount() {
-    this.fetchApiData();
-  };
-
-  // check if api data is loaded without error, create a true state in order to hide later on onblur
-  onKeyUp = () => {
-    const { isLoaded, error } = this.state;
-    if (isLoaded && !error) {
-      this.setState({ showSuggestions: true, pressedKeyUp: true });
+    if (userInput.length < 2) {
+      this.setState({ filteredResults: [] });
+      return;
     }
-  };
+
+    try {
+      const response = await fetchSuggestions(userInput);
+      this.setState({
+        suggestions: response.suggestions,
+        isLoaded: true,
+        showSuggestions: true
+      });
+
+      const filteredResults = this.state.suggestions.filter(({ searchterm }) => searchterm.includes(userInput.toLowerCase()));
+      this.setState({ filteredResults });
+
+    } catch (err) {
+      throw err;
+    }
+  }
 
   // hide suggestions
   onBlur = () => this.setState({
@@ -63,52 +51,20 @@ class SearchBar extends Component {
 
   // event is fired when users input changes
   onChange = (event) => {
-    const { value, suggestions, pressedKeyUp } = this.state;
     this.setState({
-      value: event.target.value,
-      pressedKeyUp: false
-    }, () => {
-      if (value && value.length > 1) {
-        if (value.length % 2 === 0) {
-
-          // filters suggestions which do not match the users input
-          const filteredResults = suggestions.filter(({ searchterm }) => searchterm.includes(value.toLowerCase()));
-          this.setState({ filteredResults: filteredResults });
-        }
-      }
+      userInput: event.target.value,
     })
   };
 
-  renderSuggestions = () => {
-    const { suggestions, filteredResults, value, pressedKeyUp, showSuggestions } = this.state;
-    const { errorMessage } = this.props;
-
-    if (showSuggestions && value.length > 2) {
-
-      // error case
-      if (filteredResults.length === 0) {
-        return (
-          <div className="errorMessage">{errorMessage}</div>
-        );
-      }
-      return (
-        <SearchSuggestions suggestions={filteredResults} />
-      );
-    } else if(showSuggestions && pressedKeyUp) {
-      return (
-        <SearchSuggestions suggestions={suggestions}/>
-      );
-    }
-    return null
-  };
-
-  clearUserInput = () => this.setState({ value: "", errorShown: false });
+  // deletes user input
+  clearUserInput = () => this.setState({ value: "" });
 
   render() {
-    const { value } = this.state;
-    const { placeholder } = this.props;
+    const { userInput, suggestions, isLoaded, filteredResults, showSuggestions } = this.state;
+    const { placeholder, errorMessage } = this.props;
 
-    const showClearButton = value !== "";
+    const showClearButton = userInput !== "";
+    const showErrorMessage = (userInput.length > 2) && (filteredResults.length === 0);
 
     return (
       <div className="panel">
@@ -116,11 +72,11 @@ class SearchBar extends Component {
           <label className="label">Search Bar</label>
           <div className="input-group">
             <input
-              value={value}
+              value={userInput}
               placeholder={placeholder}
               onBlur={this.onBlur}
               onChange={this.onChange}
-              onKeyUp={this.onKeyUp}
+              onKeyUp={this.onHandleKeyUp}
               onKeyDown={this.onKeyDown}
             />
 
@@ -141,9 +97,15 @@ class SearchBar extends Component {
               </svg>
             </button>
 
-            { this.renderSuggestions() }
+            { isLoaded &&
+              <SearchSuggestions suggestions={filteredResults} />
+            }
 
           </div>
+
+          { showErrorMessage && showSuggestions &&
+            <div className="errorMessage">{errorMessage}</div>
+          }
 
 
         </form>
