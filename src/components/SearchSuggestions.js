@@ -1,19 +1,26 @@
 import React from 'react';
+import Highlighter from "react-highlight-words";
 
 import './SearchSuggestions.css';
 
-const SearchSuggestions = (props) => {
-  const suggestions = props.suggestions.map(suggestion => (
-
-    <div
-      className="suggestion-list"
-    >
-      <span
-        key={suggestion}
-      >{suggestion.searchterm} ({suggestion.nrResults})</span>
+const SearchSuggestions = ({ value, suggestions }) => {
+  return (
+    <div className="suggestions-container">
+      {suggestions &&
+        suggestions.map(suggestion => (
+          <div className="suggestions-list" key={suggestion["nrResults"]}>
+            <Highlighter
+              highlightClassName="highlight-input"
+              activeIndex={-1}
+              caseSensitive={false}
+              searchWords={[value]}
+              textToHighlight={suggestion["searchterm"]}
+            />
+            <div className="nr-results"> ({suggestion["nrResults"]})</div>
+          </div>
+        ))}
     </div>
-  ));
-  return <div className="suggestion-container">{suggestions}</div>;
+  );
 };
 
 export default SearchSuggestions;

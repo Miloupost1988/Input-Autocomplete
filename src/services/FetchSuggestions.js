@@ -1,5 +1,3 @@
-import React from 'react';
-
 const fetchSuggestions = (userInput) => {
 		this.baseRoute = 'http://localhost:3000';
 		this.apiSearchRoute = '/search';

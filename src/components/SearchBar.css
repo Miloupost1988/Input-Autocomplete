@@ -2,6 +2,7 @@ body {
   font-family: "Lato", sans-serif;
   color: #67707c;
   background-color: #D3DADE;
+  font-size: 13px;
 }
 
 .panel {
@@ -35,19 +36,19 @@ label {
 .input-group {
   position: relative;
   display: inline-block;
-  width: 100%;
+  width: 320px;
   height: 44px;
   margin-top: 10px;
 }
 
 input {
-  width: 90%;
+  width: 300px;
   height: 32px;
-  padding: 5px;
+  padding: 5px 10px;
   border: 1px solid #ddd;
   box-shadow: none;
   outline: none;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 input[placeholder]:focus::-webkit-input-placeholder {
@@ -55,14 +56,14 @@ input[placeholder]:focus::-webkit-input-placeholder {
   opacity: 0;
 }
 
-.clearButton {
+.clear-button {
   position: absolute;
   right: 35px;
-  top: 16px;
+  top: 15px;
   cursor: pointer;
 }
 
-.clearButton:hover {
+.clear-button:hover {
   color: black;
 }
 
@@ -70,26 +71,16 @@ input:focus {
   box-shadow: 0 0 0 1px #FECA1D, 0 0 8px #FECA1D;
 }
 
-button {
+svg {
   position: absolute;
-  width: 44px;
-  height: 44px;
-  padding: 5px;
-}
-
-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 1px #FECA1D, 0 0 0 3px #FECA1D;
+  height: 16px;
+  width: 16px;
+  right: 5px;
+  top: 15px;
   cursor: pointer;
 }
 
-svg {
-  height: 20px;
-  width: 20px;
-}
-
-.errorMessage {
-  font-size: 14px;
+.error-message {
   color: red;
   margin-top: 5px;
 }

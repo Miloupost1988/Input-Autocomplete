@@ -56,7 +56,7 @@ class SearchBar extends Component {
   };
 
   // deletes user input
-  clearUserInput = () => this.setState({ value: "" });
+  clearUserInput = () => this.setState({ userInput: "" });
 
   render() {
     const { userInput, isLoaded, suggestions, showSuggestions } = this.state;
@@ -67,7 +67,10 @@ class SearchBar extends Component {
 
     return (
       <div className="panel">
-        <form className="form">
+        <form
+          className="form"
+          autocomplete="off"
+        >
           <label className="label">Search Bar</label>
           <div className="input-group">
             <input
@@ -81,29 +84,27 @@ class SearchBar extends Component {
 
             { showClearButton &&
                 <div
-                  className="clearButton"
+                  className="clear-button"
                   onClick={this.clearUserInput}
                 >X</div>
             }
 
-            <button type="button">
-              <svg viewBox="0 0 1024 1024" className="css-ha8kg">
-                <path
-                  d="M218 670a318 318 0 0 1 0-451 316 316 0 0 1 451 0 318 318 0 0 1 0 451 316 316 0 0 1-451 0m750 240L756 698a402 402 0 1 0-59 60l212 212c16 16 42 16 59 0 16-17 16-43 0-60"
-                  className="css-kqzqgg"
-                >
-                </path>
-              </svg>
-            </button>
+            <svg viewBox="0 0 1024 1024" className="css-ha8kg">
+              <path
+                d="M218 670a318 318 0 0 1 0-451 316 316 0 0 1 451 0 318 318 0 0 1 0 451 316 316 0 0 1-451 0m750 240L756 698a402 402 0 1 0-59 60l212 212c16 16 42 16 59 0 16-17 16-43 0-60"
+                className="css-kqzqgg"
+              >
+              </path>
+            </svg>
 
-            { isLoaded &&
-              <SearchSuggestions suggestions={suggestions} />
+            { isLoaded && showSuggestions &&
+              <SearchSuggestions suggestions={suggestions} value={userInput} />
             }
 
           </div>
 
           { showErrorMessage && showSuggestions &&
-            <div className="errorMessage">{errorMessage}</div>
+            <div className="error-message">{errorMessage}</div>
           }
 
 
