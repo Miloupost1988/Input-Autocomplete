@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Highlighter from "react-highlight-words";
 
 import './SearchSuggestions.css';
@@ -24,3 +25,8 @@ const SearchSuggestions = ({ value, suggestions }) => {
 };
 
 export default SearchSuggestions;
+
+SearchSuggestions.propTypes = {
+  value: PropTypes.string.isRequired,
+  suggestions: PropTypes.array.isRequired
+};
