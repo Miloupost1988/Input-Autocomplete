@@ -5,22 +5,13 @@ body {
   font-size: 13px;
 }
 
-.panel {
-  width: 400px;
-  margin: 20px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: #fff;
-}
-
 .form {
   display: flex;
   flex-direction: column;
   width: 320px;
   position: relative;
   display: block;
-  margin: 20px auto;
+  margin: 20px auto 0px;
 }
 
 @media only screen and (max-width: 767px) {
@@ -78,9 +69,4 @@ svg {
   right: 5px;
   top: 15px;
   cursor: pointer;
-}
-
-.error-message {
-  color: red;
-  margin-top: 5px;
 }

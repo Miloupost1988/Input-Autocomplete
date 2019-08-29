@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import SearchBar from './components/SearchBar';
+import SearchBarContainer from './containers/SearchBarContainer';
 
 class App extends Component {
   render() {
     return (
       <div>
-        <SearchBar
+        <SearchBarContainer
           placeholder="zoeken"
           errorMessage="Geen match gevonden! Probeer opnieuw"
         />
