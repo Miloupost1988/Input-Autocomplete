@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import Adapter from 'enzyme-adapter-react-16';
 import { configure, mount } from 'enzyme';
 
-import SearchBar from './SearchBar';
+import SearchBar from '../components/SearchBar';
 
 configure({ adapter: new Adapter() });
 

@@ -37,13 +37,12 @@ class SearchBarContainer extends Component {
 
     try {
       const response = await fetchSuggestions(userInput);
+
+      const filteredResults = response.suggestions.filter(({ searchterm }) => searchterm.includes(userInput.toLowerCase()));
       this.setState({
-        suggestions: response.suggestions,
+        suggestions: filteredResults,
         showSuggestions: true
       });
-
-      const filteredResults = this.state.suggestions.filter(({ searchterm }) => searchterm.includes(userInput.toLowerCase()));
-      this.setState({ suggestions: filteredResults });
 
     } catch (err) {
       console.log(err);
